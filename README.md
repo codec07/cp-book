@@ -38,7 +38,7 @@ Every topic file follows the same contract:
 |---|---|---|---|---|
 | 1 | CPP for CP | `CPP for CP/` | 15 | **Complete** |
 | 2 | [CP Level 1](CP%20Level%201/README.md) | `CP Level 1/` | 11 | **Complete** |
-| 3 | CP Level 2 | `CP Level 2/` | 9 | **In progress** (4/9) |
+| 3 | CP Level 2 | `CP Level 2/` | 9 | **In progress** (5/9) |
 | 4 | CP Level 3 | `CP Level 3/` | 11 | Planned |
 | 5 | CP Level 4 | `CP Level 4/` | 11 | Planned |
 | 6 | CP Level 5 | `CP Level 5/` | 10 | Planned |
@@ -132,7 +132,7 @@ g++ -std=c++17 -g -fsanitize=address,undefined -D_GLIBCXX_DEBUG -o sol sol.cpp
 
 - [x] Chapter 1 — CPP for CP (15/15 topics, ~13,450 lines, 510 code blocks)
 - [x] Chapter 2 — CP Level 1 (11/11 topics, ~7,370 lines, 140 code blocks)
-- [ ] Chapter 3 - CP Level 2 - 4 of 9 topics
+- [ ] Chapter 3 - CP Level 2 - 5 of 9 topics
 - [ ] Chapter 4 — CP Level 3
 - [ ] Chapter 5 — CP Level 4
 - [ ] Chapter 6 — CP Level 5
