@@ -10,8 +10,8 @@ This is not a syntax reference and it is not a problem archive. It is a **book y
 
 | If you are… | Begin at | Then |
 |---|---|---|
-| New to C++ and contests | [Chapter 1 — CPP for CP](CPP%20for%20CP/README.md) | Chapter 2 |
-| Comfortable with C++, new to CP | [Chapter 2 — CP Level 1](#chapter-map) | Chapter 3 |
+| New to C++ and contests | [Chapter 1 — CPP for CP](CPP%20for%20CP/README.md) | [Chapter 2 — CP Level 1](CP%20Level%201/README.md) |
+| Comfortable with C++, new to CP | [Chapter 2 — CP Level 1](CP%20Level%201/README.md) | Chapter 3 |
 | Solving Div. 2 A–B, stuck at C | [Chapter 3 — CP Level 2](#chapter-map) | Chapter 5 |
 | Preparing for ICPC regionals | [Chapter 6 — CP Level 5](#chapter-map) | Chapter 9 |
 
@@ -37,7 +37,7 @@ Every topic file follows the same contract:
 | # | Chapter | Folder | Topics | Status |
 |---|---|---|---|---|
 | 1 | CPP for CP | `CPP for CP/` | 15 | **Complete** |
-| 2 | CP Level 1 | `CP Level 1/` | 11 | **In progress** (6/11) |
+| 2 | [CP Level 1](CP%20Level%201/README.md) | `CP Level 1/` | 11 | **Complete** |
 | 3 | CP Level 2 | `CP Level 2/` | 9 | Planned |
 | 4 | CP Level 3 | `CP Level 3/` | 11 | Planned |
 | 5 | CP Level 4 | `CP Level 4/` | 11 | Planned |
@@ -131,7 +131,7 @@ g++ -std=c++17 -g -fsanitize=address,undefined -D_GLIBCXX_DEBUG -o sol sol.cpp
 ## Progress
 
 - [x] Chapter 1 — CPP for CP (15/15 topics, ~13,450 lines, 510 code blocks)
-- [ ] Chapter 2 — CP Level 1 — 6 of 11 topics
+- [x] Chapter 2 — CP Level 1 (11/11 topics, ~7,370 lines, 140 code blocks)
 - [ ] Chapter 3 — CP Level 2
 - [ ] Chapter 4 — CP Level 3
 - [ ] Chapter 5 — CP Level 4
