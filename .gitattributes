@@ -1,0 +1,23 @@
+# Normalise line endings so Windows CRLF and Linux LF never fight.
+# Markdown and C++ source are stored as LF in the repo; Git converts on checkout.
+* text=auto eol=lf
+
+*.md      text eol=lf
+*.cpp     text eol=lf
+*.hpp     text eol=lf
+*.h       text eol=lf
+*.txt     text eol=lf
+*.json    text eol=lf
+*.yml     text eol=lf
+*.yaml    text eol=lf
+
+# Binary assets must never be converted.
+*.png     binary
+*.jpg     binary
+*.jpeg    binary
+*.gif     binary
+*.pdf     binary
+*.zip     binary
+
+# GitHub language stats: keep the repo "prose, not code".
+*.md      linguist-documentation

@@ -1,0 +1,48 @@
+# ---- OS cruft ----
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+
+# ---- OneDrive sync conflict copies ----
+*conflict*
+*DESKTOP-*
+*-Copy*
+*~$*
+
+# ---- C++ build artifacts ----
+*.exe
+*.out
+*.o
+*.obj
+*.a
+*.lib
+*.dll
+*.pdb
+*.ilk
+*.gch
+*.dSYM/
+a.out
+sol
+sol.exe
+
+# ---- CMake ----
+build/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+
+# ---- Editors ----
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+
+# ---- Temp ----
+tmp/
+temp/
+*.tmp
+*.log
