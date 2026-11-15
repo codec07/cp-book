@@ -15,50 +15,59 @@ That is the point of this file. In Topics 01–03 the tool was named in the sect
 
 ## 1. How to use this set
 
-Each problem follows the same shape:
+Each problem is presented the way a contest would present it: a **statement** written as prose, with the constraints a judge would publish and no hint about the method. Everything that could give the answer away is folded behind a disclosure triangle:
 
-- **Statement** — with constraints.
-- **Why this approach** — the deduction from the statement to the technique.
-- **Solution** — the idea, then the code.
-- **Input / Output** — a worked example that exercises the interesting boundary.
-- **Complexity** and **The trap** — where this problem is usually failed.
+- **Statement** - always visible. Read it twice and decide what has to be computed before opening anything.
+- **Solution** (collapsed) - the deduction from the statement to the technique, the code, a worked **input / output** pair, the complexity, and **the trap**.
 
-The twenty are ordered by technique, not by difficulty, so that the contrast between adjacent problems is visible. Read §2 first: it is the index, and it is the most useful page in the file.
+The twenty are ordered by technique, not by difficulty. §2 is the index, but it is the answer key, so it is collapsed too: open it only after you have attempted a problem, or at the end, to check whether your instinct was naming the same technique.
+
+A statement that reads oddly is usually doing its job. Contest prose carries decoys - a delivery schedule that does not matter, an office that never appears again, an "at most" that is really an equality. Finding the one sentence that constrains the answer is part of the problem.
 
 ---
 
 ## 2. The technique map
 
-| # | Problem | Technique | The phrase that gives it away |
-|---|---|---|---|
-| 1 | Three Sum | sort + converging pointers | "triples", $n \le 3000$ |
-| 2 | Squares of a Sorted Array | two ends, fill backwards | input is sorted, output must be |
-| 3 | Partition Labels | last-occurrence table + scan | "each letter in at most one part" |
-| 4 | At Most $K$ Distinct | variable sliding window | "longest subarray with at most" |
-| 5 | Product Less Than $K$ | shrinking window | "count subarrays with product" |
-| 6 | Remove Duplicates II | slow/fast write pointer | "in place, at most twice" |
-| 7 | Find Peak Element | binary search, no sort | "any peak", $O(\log n)$ required |
-| 8 | Rotated Sorted Array | binary search on a broken order | "rotated", strictly increasing pieces |
-| 9 | Bouquets | binary search on the answer | "minimum day such that" |
-| 10 | K-th Smallest Pair Distance | answer search + two pointers | "k-th smallest", $n^2$ pairs |
-| 11 | Median of Two Sorted Arrays | partition binary search | "median", $O(\log)$ required |
-| 12 | K-th in a Sorted Matrix | value search + staircase count | rows and columns both sorted |
-| 13 | Longest Increasing Subsequence | `tails` + `lower_bound` | $n \le 2 \times 10^5$, $O(n^2)$ too slow |
-| 14 | Sort Characters by Frequency | counting + comparator | "decreasing frequency", tie rule |
-| 15 | Reorder Log Files | custom comparator + stability | two classes with different orders |
-| 16 | Custom Sort String | order table | the order is *given* |
-| 17 | Count Inversions | merge sort, counting | "pairs that are out of order" |
-| 18 | Non-Overlapping Intervals | greedy by end time | "remove the minimum number" |
-| 19 | Burst Balloons | greedy by end point | intervals, "minimum arrows" |
-| 20 | Two City Scheduling | sort by the difference | equal halves, per-person costs |
+<details>
+<summary>Spoiler index - open only after you have attempted the set</summary>
 
-**Read the table as a whole.** Notice that eight of the twenty are binary search, which is why it earns three sections in this chapter. Notice also that the "phrase" column is the actual skill — most of these are recognisable in under ten seconds once you have seen the phrasing.
+| # | Problem | Technique | The clue buried in the statement |
+|---|---|---|---|
+| 1 | Three Sum | sort + converging pointers | "kinds of three-donation groups", $n \le 3000$ |
+| 2 | Squares of a Sorted Array | two ends, fill backwards | input arrives sorted, output must be sorted |
+| 3 | Partition Labels | last-occurrence table + scan | "a letter in one piece only", "largest number of pieces" |
+| 4 | At Most $K$ Distinct | variable sliding window | "at most $K$ different genres", longest streak |
+| 5 | Product Less Than $K$ | shrinking window | "product ... strictly below $K$", count runs |
+| 6 | Remove Duplicates II | slow/fast write pointer | "at most two of any one number", "no spare storage" |
+| 7 | Find Peak Element | binary search, no sort | "higher than both neighbours", logarithmic probes |
+| 8 | Rotated Sorted Array | binary search on a broken order | "the stack was cut and swapped", logarithmic page opens |
+| 9 | Bouquets | binary search on the answer | "earliest morning", $k$ adjacent beds |
+| 10 | K-th Smallest Pair Distance | answer search + two pointers | "$k$-th smallest value" among all pairs, $10^4$ lamps |
+| 11 | Median of Two Sorted Arrays | partition binary search | "median", "logarithmic number of entries" |
+| 12 | K-th in a Sorted Matrix | value search + staircase count | rows and columns both increase, $k$-th entry |
+| 13 | Longest Increasing Subsequence | `tails` + `lower_bound` | "longest subsequence, gaps allowed", $n \le 2 \times 10^5$ |
+| 14 | Sort Characters by Frequency | counting + comparator | "most frequent letter first", tie rule |
+| 15 | Reorder Log Files | custom comparator + stability | two classes with contradictory orders |
+| 16 | Custom Sort String | order table | the alphabet order is *given* |
+| 17 | Count Inversions | merge sort, counting | "pairs in the wrong relative order" |
+| 18 | Non-Overlapping Intervals | greedy by end time | "reject as few as possible", touching is fine |
+| 19 | Burst Balloons | greedy by end point | "destroys every banner containing $x$", fewest darts |
+| 20 | Two City Scheduling | sort by the difference | exactly half to each office, per-person costs |
+
+**Read the table as a whole.** Eight of the twenty are binary search, which is why it earns three sections in this chapter. The right-hand column is the actual skill: every row is a sentence that a contest setter wrote to be read quickly and misread slowly. Learn to hear "$k$-th smallest" and start looking for a monotone predicate, and you will have learned more than the code below teaches.
+
+</details>
 
 ---
 
+
 ## 3. Problem 1 — Three Sum
 
-> **Statement.** Given $n$ integers, count the **distinct value triples** $\{a, b, c\}$ with $a + b + c = 0$. $n \le 3000$.
+> **Statement.** The treasurer of a small club is preparing the annual audit. Every donation is recorded as a signed number - money in is positive, money out is negative - and the audit asks for the number of *kinds* of three-donation groups whose signed amounts cancel to exactly zero. Two groups are the same kind when they contain the same three amounts, no matter which members gave them or in what order the ledger lists them. A bad year puts three thousand entries in the ledger, and every amount satisfies $\lvert a \rvert \le 10^9$.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -122,11 +131,17 @@ Sorted: $-4, -1, -1, 0, 1, 2$. The two distinct triples are $\{-1, -1, 2\}$ and 
 
 The duplicate skips change the problem. Without them you count *index* triples, so $\{-1,-1,2\}$ is counted once per way of choosing which `-1` is which. Read whether the statement wants distinct values or distinct index triples — they differ by a factor equal to the number of repeats, and both appear in real problems.
 
+</details>
+
 ---
 
 ## 4. Problem 2 — Squares of a Sorted Array
 
-> **Statement.** Given a sorted array (which may contain negatives), output the squares of its elements in sorted order. $n \le 2 \times 10^5$.
+> **Statement.** A calibration rig logs signed offsets from a reference line, and it logs them already sorted - most negative first, most positive last. The physics module downstream cannot use offsets at all; it needs energies, the square of each offset, and it insists on receiving them in non-decreasing order as well. Produce the energy list. There are up to $2 \times 10^5$ offsets, and an offset may be as large as $10^9$ in absolute value.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -177,11 +192,17 @@ int main() {
 
 The array of squares must be `long long`. A value of $3 \times 10^9$ does not fit in `int`, and neither does its square times anything else you might multiply by. Here `a` is already `long long`, so `a[i] * a[i]` is computed in 64 bits.
 
+</details>
+
 ---
 
 ## 5. Problem 3 — Partition Labels
 
-> **Statement.** Partition a string into the maximum number of parts such that no letter appears in more than one part. Output the size of each part. $|s| \le 2 \times 10^5$.
+> **Statement.** An archivist is cutting a long paper tape printed with lowercase letters into consecutive pieces. A letter is territorial: if one piece contains it, no other piece may. Subject to that rule, the archivist wants the largest possible number of pieces, and asks only for their lengths in order. The tape holds up to $2 \times 10^5$ letters.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -239,11 +260,17 @@ The first part is `ababcbaca` — it must extend to index 8 because that is wher
 
 Computing `last` only for letters seen so far in the current part. The end of a part depends on the last occurrence of every letter *inside* it, which may be far to the right — so the table must be built in a full pass first.
 
+</details>
+
 ---
 
 ## 6. Problem 4 — Longest Subarray With At Most $K$ Distinct
 
-> **Statement.** Find the length of the longest contiguous subarray containing at most $K$ distinct values. $n \le 2 \times 10^5$.
+> **Statement.** A runner builds a single unbroken streak from an album of tracks, played in album order. She can push through at most $K$ different genres before the streak stops feeling like one workout, and she refuses to skip or reorder anything. What is the longest streak she can play? The album has up to $2 \times 10^5$ tracks, and $K$ never exceeds the number of distinct genres.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -301,11 +328,17 @@ The window `1 2 1 2` has two distinct values. Adding the `3` makes three, forcin
 
 Erasing the key when its count reaches zero. If you leave zeros in the map, `cnt.size()` counts keys that are no longer in the window and the `while` loop shrinks too far — producing a smaller answer that still looks plausible.
 
+</details>
+
 ---
 
 ## 7. Problem 5 — Subarrays With Product Less Than $K$
 
-> **Statement.** Given a positive-integer array, count the contiguous subarrays whose product is strictly less than $K$. $n \le 3 \times 10^4$, $K \le 10^6$.
+> **Statement.** A fraud detector examines runs of consecutive transactions from a single account. Every amount is a positive integer, and a run is flagged as *suspicious* when the product of its amounts is strictly below a risk threshold $K$. The compliance team wants the number of non-empty runs that would be flagged. An account may show $3 \times 10^4$ transactions, and $K$ may be as large as $10^6$.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -365,11 +398,17 @@ The valid subarrays are `[10]`, `[10,5]`, `[5]`, `[5,2]`, `[5,2,6]`, `[2]`, `[2,
 
 `k <= 1` must be handled before the loop. With $k = 1$ and all values $\ge 1$, no product is ever below 1, so the window empties completely and `right - left + 1` becomes negative — silently corrupting the count.
 
+</details>
+
 ---
 
 ## 8. Problem 6 — Remove Duplicates II
 
-> **Statement.** Given a sorted array, remove duplicates **in place** so that each value appears at most twice. Output the new length and the resulting prefix. $O(1)$ extra space.
+> **Statement.** A museum shelf holds artefacts sorted by inventory number. Curators tolerate at most two artefacts of any one number on the shelf, and the storage room is full, so the shelf must be compacted in place: every number keeps its first two appearances, everything after them is removed, and the surviving order is unchanged. Report how many artefacts remain and what the shelf looks like. The shelf may hold $2 \times 10^5$ artefacts, and there is no spare storage.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -423,11 +462,17 @@ Comparing against `a[fast-2]` (the input) instead of `a[slow-2]` (the output). I
 
 Note also `slow < 2 || ...`: the first two elements are always written, which is what avoids reading `a[-1]`.
 
+</details>
+
 ---
 
 ## 9. Problem 7 — Find Peak Element
 
-> **Statement.** Given an array where no two adjacent elements are equal, find the index of any local maximum (an element greater than both neighbours; the ends count against a virtual $-\infty$). $O(\log n)$.
+> **Statement.** A weather station sampled a mountain ridge at equally spaced points. No two consecutive readings are equal, and the profile may rise and fall as often as it likes. The survey needs the location of *some* point that is strictly higher than both of its immediate neighbours, with the two ends compared against an imaginary reading of minus infinity. The archive is enormous and the retrieval budget permits only a logarithmic number of probes, so walking the readings one by one is not an option. At least one such point exists.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -477,11 +522,17 @@ int main() {
 
 Adding a validity check like `if (mid > 0 && a[mid] > a[mid-1] && ...) return mid;` inside the loop. It is not wrong, but it invites the belief that the predicate is "is this a peak" — which is not monotone. The predicate that makes binary search work is "is the slope positive here", and that is a comparison of two adjacent elements only.
 
+</details>
+
 ---
 
 ## 10. Problem 8 — Search in a Rotated Sorted Array
 
-> **Statement.** A strictly increasing array has been rotated at an unknown pivot. Given a target, return its index or `-1`. $O(\log n)$, all values distinct.
+> **Statement.** During a move, the pages of a warehouse manifest were rotated: they had been in increasing order of item code, then the stack was cut somewhere and the two parts were swapped, each part keeping its internal order. A customer asks whether a particular code is on the manifest, and the clerk wants its page number, counting pages from zero. The manifest holds up to $2 \times 10^5$ distinct codes, and the clerk may not walk the stack - only a logarithmic number of page opens is permitted. Report the page number, or $-1$ if the code is absent.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -539,11 +590,17 @@ The `0` sits at index 4, immediately after the rotation point.
 
 Using `<` instead of `<=` in `a[lo] <= a[mid]`. When `lo == mid` — which happens once the range has shrunk to two elements — the left "half" is a single element and must be treated as sorted. With `<`, the code takes the wrong branch and the search can terminate on the wrong element.
 
+</details>
+
 ---
 
 ## 11. Problem 9 — Minimum Days to Make Bouquets
 
-> **Statement.** There are $n$ flowers; flower $i$ blooms on day `bloom[i]`. You need `m` bouquets of `k` **adjacent** flowers each. Find the minimum day on which this is possible, or `-1`.
+> **Statement.** A florist rents $n$ flower beds in a row; bed $i$ produces its flowers on day $b_i$ and nothing before that. A wedding order asks for $m$ bouquets, each requiring exactly $k$ *adjacent* beds in bloom on the same day, and no bed may be used twice. The florist wants the earliest morning on which the order can be assembled, or a report that it never can be. There are up to $2 \times 10^5$ beds, bloom days up to $10^9$, and an order may be impossible even when the beds are numerous.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -609,11 +666,17 @@ With `k = 1`, each bloomed flower is its own bouquet. On day 3 three flowers hav
 
 Forgetting the `if (!ok(hi))` pre-check. Without it, the binary search converges on `hi` even when the task is impossible, and prints a day that does not actually work. The `-1` case is easy to miss because it needs `m * k > n` as well as the bloom constraint.
 
+</details>
+
 ---
 
 ## 12. Problem 10 — K-th Smallest Pair Distance
 
-> **Statement.** Given an array, consider all $\binom{n}{2}$ pairwise absolute differences. Find the $k$-th smallest. $n \le 10^4$, $k \le \binom{n}{2}$.
+> **Statement.** An acoustic engineer measures $n$ lamps along a corridor by position. The disturbance caused by a pair of lamps is the absolute difference of their positions, and the engineer ranks all pairs by disturbance, counting equal disturbances as separate ranks. She needs the $k$-th smallest value in that ranking. There can be $10^4$ lamps, so the ranking is far too long to write down.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -678,11 +741,17 @@ Sorted: $1, 1, 3$. The three distances are $0, 2, 2$; the smallest is 0.
 
 Resetting `j = 0` inside the loop for each `i`. That makes the counting $O(n^2)$ and the whole solution $O(n^2 \log(\text{range}))$, which at $n = 10^4$ is slow enough to matter. The shared `j` is what makes it linear, and it works because `a[j] - a[i]` decreases as `i` increases.
 
+</details>
+
 ---
 
 ## 13. Problem 11 — Median of Two Sorted Arrays
 
-> **Statement.** Given two sorted arrays of sizes $n$ and $m$, find the median of the combined multiset in $O(\log(\min(n, m)))$. Output with 4 decimals.
+> **Statement.** Two libraries hold their catalogue numbers in increasing order. A historian needs the median of the combined catalogue, but the collections are on loan: the numbers may be read where they lie and must not be merged, copied, or re-shelved. The procedure may open only a logarithmic number of entries, measured in the smaller collection. Print the median with four digits after the decimal point. Each library holds up to $2 \times 10^5$ numbers.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -752,11 +821,17 @@ Combined: $1, 2, 3$ — the median is 2.
 
 The sentinels. Using $0$ instead of `LLONG_MIN` / `LLONG_MAX` breaks whenever the arrays contain negatives or large values, and the failure is data-dependent. Also note `half = (n+m+1)/2` — the `+1` makes the left side the larger one for odd totals, so the `max(aL, bL)` branch is correct for both parities.
 
+</details>
+
 ---
 
 ## 14. Problem 12 — K-th Smallest in a Sorted Matrix
 
-> **Statement.** An $n \times n$ matrix has rows and columns sorted ascending. Find the $k$-th smallest element in $O(n \log(\text{range}))$.
+> **Statement.** An auditor is given an $n \times n$ ledger in which every row increases from left to right and every column increases from top to bottom. She wants the $k$-th smallest entry of the whole ledger, counting repetitions as separate entries. The ledger is at most $1000 \times 1000$, and $k$ counts entries, not distinct values.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -821,11 +896,17 @@ The sorted order is $1, 5, 9, 10, 11, 12, 13, 13, 15$; the eighth is 13.
 
 Binary searching the *index* from `1` to `n*n` and mapping to a cell. There is no monotone mapping from index to position in a row-and-column sorted matrix — only from value to count. The count is monotone; the position is not.
 
+</details>
+
 ---
 
 ## 15. Problem 13 — Longest Increasing Subsequence in $O(n \log n)$
 
-> **Statement.** Find the length of the longest strictly increasing subsequence. $n \le 2 \times 10^5$.
+> **Statement.** An analyst follows a sequence of measurements and wants the longest *subsequence* that is strictly increasing - elements taken in their original order, gaps allowed. The sequence can contain $2 \times 10^5$ measurements, with values up to $10^9$.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -877,11 +958,17 @@ One longest increasing subsequence is $2, 3, 7, 101$ — four elements.
 
 Using `upper_bound` instead of `lower_bound` for the **strictly** increasing version. `lower_bound` replaces the first element $\ge x$, which is right for strict increase; `upper_bound` would allow equal elements to extend the sequence, silently answering the *non-decreasing* version instead. The two variants differ by exactly that one call.
 
+</details>
+
 ---
 
 ## 16. Problem 14 — Sort Characters by Frequency
 
-> **Statement.** Sort the characters of a string by decreasing frequency; break ties by character value ascending. $|s| \le 2 \times 10^5$.
+> **Statement.** A typesetter receives a manuscript as a single word and must rearrange its letters: the most frequent letter comes first, and letters with equal frequency appear in alphabetical order. Print the reordered word. The word may be $2 \times 10^5$ letters long and contains only lowercase letters.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -934,11 +1021,17 @@ eert
 
 Forgetting the tie-break, which makes the output depend on `sort`'s internal order for equal counts — it will pass the sample by luck and fail on hidden tests. The statement almost always specifies the tie rule; if it says "any order", any tie-break is safe, and if it is silent, alphabetic is the safe default.
 
+</details>
+
 ---
 
 ## 17. Problem 15 — Reorder Log Files
 
-> **Statement.** Each line is an identifier followed by words. If the first word after the identifier is letters, the line is a *letter-log*; otherwise it is a *digit-log*. Output all letter-logs before all digit-logs. Letter-logs are sorted by their content, ties broken by identifier. Digit-logs keep their relative input order.
+> **Statement.** A server writes $n$ log lines. Each line begins with an identifier, then either a sequence of lowercase words or a sequence of numbers, never both. Operators want the word lines printed first, ordered by everything after the identifier (ties broken by the identifier itself), followed by the number lines in the exact order the server wrote them. Reproduce the reordered log. There may be up to $2 \times 10^5$ lines.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -1009,11 +1102,17 @@ c3 7 8 9
 
 Returning `false` for both digit logs is only correct with `stable_sort`. With plain `sort` the digit-log order is unspecified, and the statement explicitly requires input order. This is one of the rare cases where `stable_sort` is the right tool rather than an explicit tie-break, because the required tie-break is "original position" and that key is not available to the comparator.
 
+</details>
+
 ---
 
 ## 18. Problem 16 — Custom Sort String
 
-> **Statement.** Given an `order` string containing distinct characters and a string `s`, permute `s` so that characters appear in the same relative order as in `order`. Characters not in `order` go last, in alphabetical order.
+> **Statement.** A deciphering team has recovered the order of an alien alphabet as a string `order`, and intercepted a message `s` written in that alphabet. To reconstruct the message they retypeset it so that its letters follow the alien order; any letter that does not occur in the recovered alphabet is appended at the end in alphabetical order. Both strings contain only lowercase letters and can be $2 \times 10^5$ long.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -1066,11 +1165,17 @@ cbad
 
 Building the output with `order` only, and forgetting letters of `s` that do not appear in `order` — they vanish entirely, and the output is shorter than the input, which some judges detect as a wrong length rather than a wrong string.
 
+</details>
+
 ---
 
 ## 19. Problem 17 — Count Inversions
 
-> **Statement.** Count pairs $i < j$ with $a_i > a_j$. $n \le 2 \times 10^5$.
+> **Statement.** A jury produced a ranking of $n$ contestants. The official order is increasing, and the organisers measure how scrambled the jury's list is by counting the pairs of contestants that appear in the wrong relative order - pairs $i < j$ with `a[i] > a[j]`. Report that number. There may be $2 \times 10^5$ contestants.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -1141,11 +1246,17 @@ The inversions are $(3,1)$ and $(3,2)$.
 
 Using `int` for the counter also overflows: the maximum is $n(n-1)/2 \approx 2 \times 10^{10}$ at $n = 2 \times 10^5$.
 
+</details>
+
 ---
 
 ## 20. Problem 18 — Non-Overlapping Intervals
 
-> **Statement.** Given intervals, find the minimum number to remove so that the rest are pairwise non-overlapping. $n \le 2 \times 10^5$.
+> **Statement.** A hall receives proposals as time intervals. The committee must reject as few proposals as possible so that the accepted ones never overlap in time; proposals that merely touch at an endpoint are compatible. Report how many proposals must be rejected. There may be up to $2 \times 10^5$ proposals.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -1206,11 +1317,17 @@ Sorting by start time. It is the natural choice and it is wrong: an interval tha
 
 Note `p.first >= lastEnd`: intervals that merely touch are compatible here. If the statement says otherwise, change the comparison.
 
+</details>
+
 ---
 
 ## 21. Problem 19 — Minimum Arrows to Burst Balloons
 
-> **Statement.** Each balloon is an interval $[l, r]$ on the x-axis. An arrow shot at position $x$ bursts every balloon with $l \le x \le r$. Find the minimum number of arrows. $n \le 2 \times 10^5$.
+> **Statement.** Banners hang along a street, each spanning an interval $[l, r]$ of positions. A single dart thrown at position $x$ destroys every banner whose interval contains $x$. Find the smallest number of darts needed to destroy all banners. There may be up to $2 \times 10^5$ banners.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -1268,11 +1385,16 @@ An arrow at 6 bursts `[1,6]` and `[2,8]`. An arrow at 12 bursts `[7,12]` and `[1
 
 `p.first > shot` versus `p.first >= shot`. Arrows burst closed intervals, so a balloon starting exactly at the arrow position **is** burst, and the test must be strict `>`. Using `>=` adds a spurious arrow for every balloon that touches the previous one.
 
+</details>
+
 ---
 
 ## 22. Problem 20 — Two City Scheduling
 
-> **Statement.** There are $n$ people, where $n$ is even. Person $i$ costs $a_i$ to send to city A and $b_i$ to city B. Send exactly $n/2$ to each city, minimising total cost. $n \le 2 \times 10^5$.
+> **Statement.** A company must staff two offices equally: exactly half of its $n$ employees, where $n$ is even, go to the northern office and half to the southern one. Sending employee $i$ north costs $a_i$ and sending them south costs $b_i$, and the amounts are not comparable between offices. Minimise the total cost. There may be $2 \times 10^5$ employees.
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -1328,6 +1450,8 @@ Differences: $-10, -170, 350, 10$. The two smallest go to A — person 1 (30) an
 ### The trap
 
 Sorting by `a_i - b_i` as `int`. The individual costs can be up to $10^9$, and while the difference itself fits, the **sum** does not — the total is a `long long`. In this code the pairs are `long long`, so the difference is computed in 64 bits; sorting by a difference computed in `int` would also overflow at the extremes.
+
+</details>
 
 ---
 

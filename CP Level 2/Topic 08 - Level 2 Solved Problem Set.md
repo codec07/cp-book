@@ -17,50 +17,59 @@ Every problem below has been checked: the code compiles, and the shown output is
 
 ## 1. How to read this set
 
-Each problem has the same five parts:
+Each problem is presented the way a contest would present it: a **statement** written as prose, with the constraints a judge would publish and no hint about the method. Everything that could give the answer away sits behind a disclosure triangle:
 
-- **Statement** - with constraints, exactly as a judge would give them.
-- **Why this approach** - the deduction. This is the part worth reading twice.
-- **Solution** - the code.
-- **Input / Output** - a small case that exercises the interesting part.
-- **Complexity** and **The trap**.
+- **Statement** - always visible, and the only thing you get for free.
+- **Solution** (collapsed) - the deduction, the code, a worked **input / output** pair, the complexity, and the trap.
 
-Work them in order the first time. They are grouped by family, and each family's second problem is a variation that exposes what the first one glossed over.
+Work them in order the first time: they are grouped by family, and each family's second problem is a variation that exposes what the first one glossed over. Resist opening the solution before you have written down what the answer even is. Most failed attempts at these problems are not failures of technique, they are misreadings of the statement.
+
+§2 is the map, and it is collapsed because it names the technique for all twenty problems.
 
 ---
 
 ## 2. The map
 
-| # | Problem | Family | The phrase that gives it away |
-|---|---|---|---|
-| 1 | Split Points | prefix sums | "left sum equals right sum" |
-| 2 | Range Add, Point Query | difference array | "$q$ range updates, print at the end" |
-| 3 | Best Window of $k$ | sliding window | "consecutive", fixed length |
-| 4 | Most Water | two pointers | "two lines", area between them |
-| 5 | Sort Colours | three pointers | "in place, three values" |
-| 6 | Merge Two Arrays | two ends | "sorted, merge without extra space" |
-| 7 | Bag Splitting | binary search on answer | "minimise the maximum", $10^9$ values |
-| 8 | The Duplicate | binary search on value | $n+1$ values in $[1,n]$ |
-| 9 | Sorted Matrix Search | staircase | rows and columns sorted |
-| 10 | Platform Count | sweep after sorting | "maximum overlap at any time" |
-| 11 | Cookie Assignment | greedy two pointers | "maximise the number satisfied" |
-| 12 | Queue by Height | sort then insert | two keys, one defines position |
-| 13 | Truck Loading | greedy after sorting | capacity plus per-unit value |
-| 14 | Diagonal Grid Path | BFS, 8 directions | "minimum moves", diagonals allowed |
-| 15 | Closed Islands | flood fill from the border | "not touching the boundary" |
-| 16 | Nearest Zero | multi-source BFS | "distance to the nearest" |
-| 17 | K-th Ancestor | binary lifting | "$q$ queries, jump $k$ levels up" |
-| 18 | Word Products | bitmask of letters | "share no common letter" |
-| 19 | Divisible Subarrays | prefix sums mod $K$ | "sum divisible by" |
-| 20 | Products Except Self | prefix and suffix | "without division" |
+<details>
+<summary>Spoiler index - open only after you have attempted the set</summary>
 
-**The right way to use this table:** cover the right-hand columns and read only the middle one. If you can name the technique from the family alone, you know the chapter.
+| # | Problem | Family | The clue buried in the statement |
+|---|---|---|---|
+| 1 | Split Points | prefix sums | "total to the left equals the total to the right" |
+| 2 | Range Add, Point Query | difference array | "$q$ storms", each covers a stretch, readings at the end |
+| 3 | Best Window of $k$ | sliding window | "$k$ rooms that stand next to each other" |
+| 4 | Most Water | two pointers | a panel between two pillars, width times the shorter |
+| 5 | Sort Colours | three pointers | three colours, one pass, swap only |
+| 6 | Merge Two Arrays | two ends | a page with blank space reserved on the right |
+| 7 | Bag Splitting | binary search on answer | "minimise the largest penalty", $10^9$ balls |
+| 8 | The Duplicate | binary search on value | $n+1$ values in $[1,n]$, no writes, no memory |
+| 9 | Sorted Matrix Search | staircase | increasing both ways, at most $r + c$ comparisons |
+| 10 | Platform Count | sweep after sorting | "occupied for the whole span", "how many platforms" |
+| 11 | Cookie Assignment | greedy two pointers | each child at most one cookie, maximise content children |
+| 12 | Queue by Height | sort then insert | "exactly $k$ people in front are at least as tall" |
+| 13 | Truck Loading | greedy after sorting | capacity counted in boxes, value counted in items |
+| 14 | Diagonal Grid Path | BFS, 8 directions | "any of the eight neighbouring cells", fewest moves |
+| 15 | Closed Islands | flood fill from the border | "a region touching the border is not counted" |
+| 16 | Nearest Zero | multi-source BFS | "steps to the nearest check point" |
+| 17 | K-th Ancestor | binary lifting | "walking up the chain $k$ steps" |
+| 18 | Word Products | bitmask of letters | "share no letter at all", product of lengths |
+| 19 | Divisible Subarrays | prefix sums mod $K$ | "net movement ... a multiple of $K$" |
+| 20 | Products Except Self | prefix and suffix | "all the other days", division forbidden |
+
+**The right way to use this table:** cover the right-hand columns and read only the middle one. If you can name the family from the statement alone, you have the chapter. If you needed the statement to say "use prefix sums", you have the chapter's vocabulary but not its reading skill - which is the part contests actually test.
+
+</details>
 
 ---
 
+
 ## 3. Problem 1 - Split Points
 
-> **Statement.** Count the indices $i$ for which the sum of the elements strictly left of $i$ equals the sum of the elements strictly right of it. $n \le 2 \times 10^5$, values $\le 10^9$.
+> **Statement.** A sculptor hangs a mobile from a single wire, and the weights along the beam sit at numbered positions $0$ to $n-1$. The beam hangs level only when the wire is attached at a position whose total weight strictly to the left equals the total strictly to the right. The gallery wants to know how many attachment points would work. There are up to $2 \times 10^5$ weights and each is at most $10^9$.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -114,11 +123,17 @@ Only index 2 works: the left sum is $1 + 3 = 4$ and the right sum is $2 + 2 = 4$
 
 `right = total - left` instead of `total - left - a[i]`. The element at $i$ belongs to neither side; including it makes the equality almost never hold, and the sample may still pass if the array happens to have zeros.
 
+</details>
+
 ---
 
 ## 4. Problem 2 - Range Add, Point Query
 
-> **Statement.** An array of $n$ zeros receives $q$ updates, each adding $x$ to every position in $[l, r]$. After all updates print the array. $n, q \le 2 \times 10^5$, values fit in `long long`.
+> **Statement.** A valley has $n$ rain gauges in a row, all reading zero in the morning. During the day $q$ storms cross the valley; a storm that passes over the stretch from gauge $l$ to gauge $r$ adds exactly $x$ millimetres to every gauge in that stretch. When the storms are over, the hydrologist needs the final reading of every gauge, in order. There are up to $2 \times 10^5$ gauges and $q$ storms, and $x$ may be negative when a storm turns out to be a reading error.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -175,11 +190,17 @@ Position 2 receives all three updates, $2 + 1 + 4 = 7$. Position 3 receives the 
 
 The array must have size `n + 2`. The write `diff[r + 1] -= x` happens at index `n + 1` when $r = n$, and a vector of size `n + 1` writes out of bounds - which often survives because the next vector starts immediately after, producing a wrong answer only on some inputs.
 
+</details>
+
 ---
 
 ## 5. Problem 3 - Best Window of k
 
-> **Statement.** Find the maximum sum of `k` consecutive elements. $n \le 2 \times 10^5$, $k \le n$.
+> **Statement.** A hotel has a corridor of rooms; room $i$ earns `a[i]` per night. A tour group wants $k$ rooms that stand next to each other and nothing else, and the manager wants the block that earns the most. Report the revenue of that best block. The corridor can hold $2 \times 10^5$ rooms.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -232,11 +253,17 @@ The windows are $8, 7, 9, 6$; the third is largest.
 
 Initialising `best = 0`. With an all-negative array the true maximum is negative and every window is rejected - the answer comes out 0, which is not even a valid window sum. Initialise `best` from the first window.
 
+</details>
+
 ---
 
 ## 6. Problem 4 - Most Water
 
-> **Statement.** Two vertical lines at positions $i < j$ with heights $h_i$ and $h_j$ hold water of area $\min(h_i, h_j) \cdot (j - i)$. Find the maximum over all pairs. $n \le 2 \times 10^5$, heights $\le 10^9$.
+> **Statement.** A skyline is described by the heights of vertical pillars standing at positions $0, 1, \dots, n-1$. A glass panel is stretched between two pillars; it is rectangular, its width is the distance between them, and its height can be no more than the shorter of the two pillars. Find the largest panel that can be hung this way. There are up to $10^5$ pillars.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -290,11 +317,17 @@ The best pair is at positions 1 and 8, with heights 8 and 7 and width 7: $7 \tim
 
 `min(h[i], h[j]) * (j - i)` computed in `int`. Heights up to $10^9$ times a width up to $2 \times 10^5$ is $2 \times 10^{14}$; the cast to `long long` must be on the product, not added afterwards.
 
+</details>
+
 ---
 
 ## 7. Problem 5 - Sort Colours
 
-> **Statement.** An array contains only 0, 1 and 2. Sort it in one pass using $O(1)$ extra space.
+> **Statement.** A parade carries banners in three colours, encoded $0$, $1$ and $2$, and the marshals want the same colours standing together in that order. The marshals may only swap banners in place and are allowed a single pass over the row with a fixed number of extra hands. There can be $2 \times 10^5$ banners.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -345,11 +378,17 @@ int main() {
 
 Incrementing `mid` after swapping with `hi`. The element swapped in from the back has not been inspected yet, so `mid` must stay put. Incrementing it skips an element, and the array comes out unsorted in a way that depends on the input order - usually passing the sample and failing a random test.
 
+</details>
+
 ---
 
 ## 8. Problem 6 - Merge Two Sorted Arrays
 
-> **Statement.** Given sorted arrays $A$ (size $p$) and $B$ (size $q$), merge them into $A$ without extra space. $p + q \le 2 \times 10^5$.
+> **Statement.** A librarian has two catalogues, each already sorted by call number. The first catalogue occupies the left part of a page whose right part is blank but reserved for it; the second catalogue is written separately. Produce the single merged catalogue on that page, in order, without copying either catalogue into a third place. The page has $p + q$ slots, with $p$ and $q$ up to $10^5$.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -399,11 +438,17 @@ int main() {
 
 The loop condition is `j >= 0`, not `i >= 0 && j >= 0`. When $B$ is exhausted the remaining prefix of $A$ is already in place; looping further would only copy elements onto themselves. But if the loop stops while `j >= 0` - which `i >= 0 && j >= 0` does when $A$ runs out first - elements of $B$ are never copied, and they are the smallest ones.
 
+</details>
+
 ---
 
 ## 9. Problem 7 - Bag Splitting
 
-> **Statement.** There are $n$ bags with `a[i]` balls. You may perform at most $h$ splits; each split replaces a bag with two bags holding positive amounts. Minimise the maximum bag size. $n \le 2 \times 10^5$, $a_i \le 10^9$.
+> **Statement.** A courier carries $n$ bags, bag $i$ holding `a[i]` balls. Before leaving, the courier may split a bag into two non-empty bags, and may do so at most $h$ times in total. A bag's penalty is the number of balls it holds, and the courier wants the largest penalty after all splits to be as small as possible. Report that smallest possible largest penalty. Bags hold up to $10^9$ balls, and there are up to $2 \times 10^5$ of them.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -464,11 +509,17 @@ At limit 2 the bags need $1, 2, 4, 1$ pieces - four splits in total, which is ex
 
 The ceiling division. `x / limit` rounds down and undercounts pieces; `(x + limit - 1) / limit` is the correct form. With `x` up to $10^9$ and `limit` starting at 1, `x + limit - 1` stays inside `long long`.
 
+</details>
+
 ---
 
 ## 10. Problem 8 - The Duplicate
 
-> **Statement.** An array of length $n + 1$ contains integers in $[1, n]$ with exactly one value repeated. Find it without modifying the array and with $O(1)$ extra space. $n \le 10^5$.
+> **Statement.** A register of $n + 1$ entries holds integers from $1$ to $n$, and exactly one value occurs twice; every other value occurs once. The auditor must name the repeated value without writing on the register and without allocating memory that grows with $n$. The register may be long - up to $2 \times 10^5$ entries.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -526,11 +577,17 @@ Indexing the search from 0. The values run $1 \ldots n$, and `mid = 0` makes the
 
 The second trap is the comparison direction: `count > mid` means *too many numbers in a range that should have few*, which is the signature of the duplicate being small.
 
+</details>
+
 ---
 
 ## 11. Problem 9 - Sorted Matrix Search
 
-> **Statement.** An $r \times c$ matrix is sorted left-to-right in every row and top-to-bottom in every column. Decide whether a target is present in $O(r + c)$. $r, c \le 1000$.
+> **Statement.** A price sheet is arranged as $r$ rows and $c$ columns, increasing from left to right in every row and from top to bottom in every column. A shopper asks whether a particular price appears on the sheet. The sheet is kept behind glass, so the clerk is not allowed to scan it: her search may compare against at most $r + c$ entries in total. Answer YES or NO. The sheet is at most $1000 \times 1000$.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -591,11 +648,17 @@ From 11 the walk goes left to 7, down to 8, left to 5 and stops.
 
 Starting at the top-left. From there both neighbours are larger, so a comparison tells you nothing about which way to go - the staircase property needs one neighbour smaller and one larger, which only the top-right (or bottom-left) corner provides.
 
+</details>
+
 ---
 
 ## 12. Problem 10 - Platform Count
 
-> **Statement.** Trains arrive and depart at given times. Find the minimum number of platforms so that no train waits. $n \le 2 \times 10^5$.
+> **Statement.** A railway station serves $n$ trains; train $i$ stands at a platform from its arrival time `arr[i]` until its departure time `dep[i]`, and a platform is occupied for the whole of that span: a train that pulls out at time $t$ still holds its platform *at* time $t$, so a train arriving at $t$ needs one of its own. How many platforms must the station build so that no train is ever turned away? There are up to $2 \times 10^5$ trains.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -656,11 +719,17 @@ At time 1100 the trains that arrived at 940, 950 and 1100 are all still present,
 
 `arrive[i] <= depart[j]` versus `<`. A platform freed at the same instant another train arrives can be reused, so arrivals must be processed first when the times tie. With `<` the sweep adds a platform that is never needed, and the answer is too large by one on every tied event.
 
+</details>
+
 ---
 
 ## 13. Problem 11 - Cookie Assignment
 
-> **Statement.** Each child $i$ needs a cookie of size at least `g[i]`. Each cookie $j$ has size `s[j]`. Each child gets at most one cookie. Maximise the number of satisfied children. $n, m \le 2 \times 10^5$.
+> **Statement.** A school has children with appetites and a pile of cookies. Child $i$ is content only with a cookie of size at least `g[i]`, each child accepts at most one cookie, and cookie $j$ has size `s[j]`. The teacher wants as many content children as possible. There are up to $3 \times 10^4$ children and cookies.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -722,11 +791,17 @@ Cookie 1 satisfies the child needing 1, cookie 2 satisfies the child needing 2, 
 
 Advancing `i` when the cookie is too small. That marks the child as satisfied without a cookie - a silent +1 on the answer that looks right whenever the greedy happens to match. Only advancing `j` on failure keeps the count honest.
 
+</details>
+
 ---
 
 ## 14. Problem 12 - Queue by Height
 
-> **Statement.** $n$ people are described by $(h, k)$: height $h$, and exactly $k$ people in front of them have height $\ge h$. Reconstruct the original queue. $n \le 2000$.
+> **Statement.** A photograph is to be taken of $n$ people standing in a queue. Each person is described by a height $h$ and a number $k$: exactly $k$ people in front of them are at least as tall. Reconstruct a queue that satisfies every person's description. Heights are up to $10^5$, $n$ is up to $2000$, and at least one valid queue exists.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -790,11 +865,17 @@ Inserting at `k` **after** sorting ascending by height. Then the people already 
 
 The second trap is ties on height: they must be ordered by $k$ ascending, or two equal-height people can be inserted in an order that violates both counts.
 
+</details>
+
 ---
 
 ## 15. Problem 13 - Truck Loading
 
-> **Statement.** A truck has capacity `size` boxes. There are $n$ box types; type $i$ has `count[i]` boxes and each holds `units[i]` items. Maximise the number of items loaded. $n \le 10^5$.
+> **Statement.** A truck can carry at most `size` boxes, and a depot stocks $n$ types of boxes; type $i$ has `count[i]` boxes available and each holds `units[i]` items. Boxes are loaded whole, a type may be used partially, and every item inside a loaded box counts. Maximise the number of items delivered. The truck holds up to $10^8$ boxes.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -853,11 +934,17 @@ Reading the input as `units` then `count`. The statement's natural order is "cou
 
 The second trap is `int` for `total`: $10^5$ boxes times $10^3$ units times $10^3$ count can reach $10^{11}$.
 
+</details>
+
 ---
 
 ## 16. Problem 14 - Diagonal Grid Path
 
-> **Statement.** A grid contains open cells `.` and walls `#`. Find the minimum number of moves from the top-left to the bottom-right, moving in any of the **eight** directions, or `-1` if unreachable. $r, c \le 1000$.
+> **Statement.** A drone hovers at the top-left cell of a grid and must reach the bottom-right cell. Each move takes it to any of the eight neighbouring cells, including the diagonals, and walls block both the cell and the move onto it. Report the fewest moves, or $-1$ if the target cannot be reached. The grid is at most $500 \times 500$.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -932,11 +1019,17 @@ Checking the destination cell only at the end. If the bottom-right cell is a wal
 
 The second trap is mixing up `dr` and `dc` - all eight offsets must be consistent, and a transposed pair still produces plausible answers on square grids.
 
+</details>
+
 ---
 
 ## 17. Problem 15 - Closed Islands
 
-> **Statement.** A grid contains land (`0`) and water (`1`). Count the land regions that touch no border. Land connects through sides. $r, c \le 500$.
+> **Statement.** A survey maps terrain as a grid where `0` marks lowland and `1` marks water. A lowland region is a group of `0` cells connected by shared sides. Rangers care only about regions that are completely enclosed: a region touching the outer border of the map is not counted. Count the enclosed regions. The map is at most $500 \times 500$.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -1018,11 +1111,17 @@ Scanning the four border loops as `i < r` for rows and `c < c` for columns - a t
 
 The second trap is forgetting that the border scan must **also** handle a grid of one row or one column, where the two loops visit the same cells. Flooding an already-converted cell is harmless because the first check rejects it.
 
+</details>
+
 ---
 
 ## 18. Problem 16 - Nearest Zero
 
-> **Statement.** For every cell of a binary matrix, print the distance (in side-adjacent steps) to the nearest `0`. $r, c \le 1000$.
+> **Statement.** A warehouse floor is a binary grid; `0` marks a check point and `1` marks an ordinary cell. For every cell, the safety score is the number of side-adjacent steps to the nearest check point, and a check point scores zero itself. Print the score grid. The floor is at most $500 \times 500$, and at least one check point exists.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -1104,11 +1203,17 @@ Running a BFS from the first zero and then patching the rest. The distances from
 
 The second trap is stamping `dist` with a large number and minimising instead of using `-1` as "unvisited". Minimising requires a relaxation step and can enqueue a cell many times; the `-1` check enqueues exactly once.
 
+</details>
+
 ---
 
 ## 19. Problem 17 - K-th Ancestor
 
-> **Statement.** A tree is rooted at 1. Answer $q$ queries: given $v$ and $k$, print the $k$-th ancestor of $v$, or `0` if it does not exist. $n, q \le 2 \times 10^5$.
+> **Statement.** A company is organised as a tree of employees; the chief executive is employee $1$, and every other employee has exactly one manager. The personnel office receives $q$ questions of the form $(v, k)$: starting from employee $v$ and walking up the chain of managers $k$ steps, who is reached, or $0$ if the chain runs out first? Answer each question. There are up to $2 \times 10^5$ employees and questions.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -1213,11 +1318,17 @@ The `k > depth[v]` test must come **before** the lift, and it must use the origi
 
 The second trap is `k` as `int`: a query may ask for up to $10^9$ steps, which is legal input even though no ancestor exists. Reading it as `long long` makes the comparison safe.
 
+</details>
+
 ---
 
 ## 20. Problem 18 - Word Products
 
-> **Statement.** Given $n$ words, find $\max |a| \cdot |b|$ over pairs of words that share no common letter. Print 0 if no pair qualifies. $n \le 1000$, $|w| \le 1000$.
+> **Statement.** A linguist collects distinct lowercase words and wants the largest possible product of the lengths of two of them that share no letter at all. If no such pair exists, report $0$. There are up to $1000$ words, each of length up to $1000$.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -1283,11 +1394,17 @@ Comparing characters in the pair loop. It is $O(n^2 L)$ and passes small tests, 
 
 The second trap is `1 << (c - 'a')` with `c` as a signed `char` on systems where `char` is signed and the input is non-ASCII. Input here is lowercase letters, so it is safe; still, casting to `int` before shifting is the habit.
 
+</details>
+
 ---
 
 ## 21. Problem 19 - Divisible Subarrays
 
-> **Statement.** Count the contiguous subarrays whose sum is divisible by $K$. $n \le 2 \times 10^5$, $K \le 10^5$, values may be negative.
+> **Statement.** A ledger records the net movement of a fund on each of $n$ consecutive days; a day may be negative. An auditor counts the stretches of consecutive days whose net movement is a multiple of $K$. Report the count. There are up to $2 \times 10^5$ days and $K$ is at most $10^9$.
+
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -1348,11 +1465,16 @@ The seven qualifying subarrays are $[4,5,0,-2,-3,1]$, $[5]$, $[5,0]$, $[5,0,-2,-
 
 The second trap is `count[0] = 1`. Without it every subarray starting at index 0 disappears from the count.
 
+</details>
+
 ---
 
 ## 22. Problem 20 - Products Except Self
 
-> **Statement.** For each index, print the product of all elements except that one, without using division. $n \le 2 \times 10^5$, products fit in `long long`.
+> **Statement.** A laboratory logs one multiplier per day for $n$ days. For each day the analyst needs the product of the multipliers of all the *other* days, and division is forbidden because the log is treated as exact integer arithmetic. Print the $n$ products. Every product the analyst must print fits in a signed 64-bit integer, and so does every product of a prefix or a suffix of the sequence. There are up to $10^5$ days.
+
+<details>
+<summary>Solution</summary>
 
 ### Why this approach
 
@@ -1408,6 +1530,8 @@ int main() {
 Multiplying in the suffix **before** using `res[i]`. The backward loop must read the prefix value, multiply by the suffix, and only then extend the suffix with `a[i]`. Swapping the last two lines multiplies each answer by its own element.
 
 The second trap is zero. With one zero, every position except the zero's own gets 0 and the zero's position gets the product of the others - which the two-sweep code handles correctly, and division-based code does not.
+
+</details>
 
 ---
 
